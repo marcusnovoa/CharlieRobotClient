@@ -1,13 +1,11 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import TestInput from './components/TestInput'
 
 const App: React.FC = () => (
   <View style={styles.container}>
-    <Image
-      style={styles.logo}
-      source={require('./assets/img/unh_logo_white.png')} />
-    <View style={styles.horizontal} />
     <Text style={styles.text}>Admissions Robot</Text>
+    <TestInput />
   </View>
 );
 

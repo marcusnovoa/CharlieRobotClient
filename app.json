@@ -1,12 +1,14 @@
 {
-  "name": "CharlieRobotClient",
-  "displayName": "CharlieRobotClient",
   "expo": {
     "name": "CharlieRobotClient",
     "slug": "CharlieRobotClient",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "splash": {
+      "image": "./assets/img/unh_logo_white.png",
+      "backgroundColor": "#004785"
+    }
   }
 }
