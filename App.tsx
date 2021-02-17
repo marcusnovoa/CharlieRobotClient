@@ -1,36 +1,57 @@
-import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import TestInput from './components/TestInput'
+import React, { useEffect, useState } from 'react'
+import { StatusBar, StyleSheet, View } from 'react-native'
+import * as Font from 'expo-font'
+import { Ionicons } from '@expo/vector-icons'
+import { Container } from 'native-base'
+import Home from './components/Home'
+import Loading from './components/Loading'
+// import TestInput from './components/TestInput'
+import UNHBanner from './components/UNHBanner'
 
-const App: React.FC = () => (
-  <View style={styles.container}>
-    <Text style={styles.text}>Admissions Robot</Text>
-    <TestInput />
-  </View>
-);
+const App: React.FC = () => {
+
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    const loadFont = async () => {
+      await Font.loadAsync({
+        'Roboto': require('native-base/Fonts/Roboto.ttf'),
+        'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
+        ...Ionicons.font,
+      })
+      setIsReady(true)
+    }
+    // Load missing font family
+    loadFont();
+  }) // No variable array, run once
+  
+  return (
+    <>
+      <StatusBar translucent backgroundColor='transparent' />
+      <Container style={styles.container}>
+        {!isReady ? (
+          <Loading />
+        ) : (
+          <View style={styles.innerContainer}>
+            <UNHBanner />
+            <Home />
+          </View>
+        )}
+      </Container>
+    </>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#004785',
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#004785',
   },
-  horizontal: {
-    borderBottomColor: '#fff',
-    borderBottomWidth: 1,
-    marginBottom: 18,
-    width: '70%'
+  innerContainer: {
+    flex: 1,
+    width: '90%',
+    paddingTop: 80
   },
-  logo: {
-    height: '8%',
-    marginBottom: 24,
-    resizeMode: 'contain'
-  },
-  text: {
-    color: '#fff',
-    fontSize: 24
-  }
-});
+})
 
-export default App;
+export default App
