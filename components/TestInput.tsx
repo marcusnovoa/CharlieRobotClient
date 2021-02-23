@@ -1,8 +1,9 @@
 import React from "react";
-import {StyleSheet, Text, View} from "react-native";
-import { Input, Item, Button } from 'native-base';
+import { StyleSheet, Text, View } from 'react-native'
+import { Input, Item, Button } from 'native-base'
 import { serverURL } from '../env.json'
 import Axios from 'axios'
+import Spacing from './styles/Spacing'
 
 // TODO deploy server to AWS and set up CI/CD
 const api = Axios.create({
@@ -17,12 +18,16 @@ function TestInput() {
   return(
     <View>
       <View style={styles.enter}>
-        <Item regular style={{width: "80%"}}>
-          <Input placeholder='Regular Textbox' onChangeText={(e) => {
+        <Item regular>
+          <Input
+            placeholder='Enter your intent...'
+            style={styles.textBox}
+            onChangeText={(e) => {
             setMessage(e)
           }}/>
         </Item>
-        <Button onPress={() => {
+        <Spacing bottom={20} />
+        <Button light full onPress={() => {
           api.post('/talk', {
             text: message
           })
@@ -35,14 +40,21 @@ function TestInput() {
           <Text>Enter</Text>
         </Button>
       </View>
-      {watsonRes !== '' ? <Text>{watsonRes}</Text> : <View />}
+      <Spacing bottom={20} />
+      {watsonRes !== '' && <Text style={styles.res}>{watsonRes}</Text>}
     </View>
-)};
+)}
 
 const styles = StyleSheet.create({
   enter: {
-    width: '80%',
-    flexDirection: "row"
+    flexDirection: 'column',
+  },
+  res: {
+    color: '#fff',
+    fontSize: 20
+  },
+  textBox: {
+    color: '#fff',
   }
 })
 

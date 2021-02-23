@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { Container } from 'native-base'
 import Home from './components/Home'
 import Loading from './components/Loading'
-// import TestInput from './components/TestInput'
+import TestInput from './components/TestInput'
 import UNHBanner from './components/UNHBanner'
 
 const App: React.FC = () => {
@@ -22,19 +22,23 @@ const App: React.FC = () => {
       setIsReady(true)
     }
     // Load missing font family
-    loadFont();
+    loadFont()
   }) // No variable array, run once
   
   return (
     <>
-      <StatusBar translucent backgroundColor='transparent' />
+      <StatusBar
+        translucent
+        backgroundColor='transparent'
+        barStyle='light-content' />
       <Container style={styles.container}>
         {!isReady ? (
           <Loading />
         ) : (
           <View style={styles.innerContainer}>
             <UNHBanner />
-            <Home />
+            {/* <Home /> */}
+            <TestInput />
           </View>
         )}
       </Container>
