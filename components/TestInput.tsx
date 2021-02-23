@@ -18,7 +18,7 @@ function TestInput() {
     <View>
       <View style={styles.enter}>
         <Item regular style={{width: "80%"}}>
-          <Input placeholder='Regular Textbox' onChangeText={(e) => {
+          <Input placeholder='Regular Textbox' style={{color: "white"}} onChangeText={(e) => {
             setMessage(e)
           }}/>
         </Item>
@@ -35,7 +35,7 @@ function TestInput() {
           <Text>Enter</Text>
         </Button>
       </View>
-      {watsonRes !== '' ? <Text>{watsonRes}</Text> : <View />}
+      {watsonRes !== '' ? <Text style={{color: "white"}}>{watsonRes}</Text> : <View />}
     </View>
 )};
 
