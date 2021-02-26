@@ -40,30 +40,28 @@ const App: React.FC = () => {
             translucent
             backgroundColor='transparent'
             barStyle='light-content' />
-          <View style={styles.innerContainer}>
-            <Stack.Navigator initialRouteName='Home'>
-              <Stack.Screen name='Home'
-                component={Home}
-                options={{
-                  headerShown: false,
-                  cardStyle: {backgroundColor: 'transparent'} }} />
-              <Stack.Screen name='NavigationControl'
-                component={NavigationControl}
-                options={{
-                  headerShown: false,
-                  cardStyle: {backgroundColor: 'transparent'} }} />
-              <Stack.Screen name='Training'
-                component={Training}
-                options={{
-                  headerShown: false,
-                  cardStyle: {backgroundColor: 'transparent'} }} />
-              {/* <Stack.Screen name='TestInput'
-                component={TestInput}
-                options={{
-                  headerShown: false,
-                  cardStyle: {backgroundColor: 'transparent'} }} /> */}
-            </Stack.Navigator>
-          </View>
+          <Stack.Navigator initialRouteName='Home'>
+            <Stack.Screen name='Home'
+              component={Home}
+              options={{
+                headerShown: false,
+                cardStyle: {backgroundColor: 'transparent'} }} />
+            <Stack.Screen name='NavigationControl'
+              component={NavigationControl}
+              options={{
+                headerShown: false,
+                cardStyle: {backgroundColor: 'transparent'} }} />
+            <Stack.Screen name='Training'
+              component={Training}
+              options={{
+                headerShown: false,
+                cardStyle: {backgroundColor: 'transparent'} }} />
+            {/* <Stack.Screen name='TestInput'
+              component={TestInput}
+              options={{
+                headerShown: false,
+                cardStyle: {backgroundColor: 'transparent'} }} /> */}
+          </Stack.Navigator>
         </NavigationContainer>
       )}
     </Container>
@@ -72,13 +70,8 @@ const App: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
     backgroundColor: '#004785',
-  },
-  innerContainer: {
-    flex: 1,
-    width: '100%'
-  },
+  }
 })
 
 export default App
