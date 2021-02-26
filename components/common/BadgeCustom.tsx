@@ -7,15 +7,9 @@ export interface Props {
 }
 
 const BadgeCustom: React.FC<Props> = ({ success }) => (
-  success ? (
-    <Badge success style={styles.badge}>
-      <Icon type='FontAwesome' name='check' style={styles.icon}/>
+    <Badge success danger={!success} style={styles.badge}>
+      <Icon type='FontAwesome' name={success ? 'check' : 'times'} style={styles.icon}/>
     </Badge>
-  ) : (
-    <Badge danger style={styles.badge}>
-      <Icon type='FontAwesome' name='times' style={styles.icon}/>
-    </Badge>
-  )
 )
 
 const styles = StyleSheet.create({
