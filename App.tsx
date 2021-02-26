@@ -5,8 +5,13 @@ import { Ionicons } from '@expo/vector-icons'
 import { Container } from 'native-base'
 import Home from './components/Home'
 import Loading from './components/Loading'
-import TestInput from './components/TestInput'
-import UNHBanner from './components/UNHBanner'
+import NavigationControl from './components/NavigationControl'
+import Training from './components/Training'
+// import TestInput from './components/TestInput'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+
+const Stack = createStackNavigator()
 
 const App: React.FC = () => {
 
@@ -26,23 +31,42 @@ const App: React.FC = () => {
   }) // No variable array, run once
   
   return (
-    <>
-      <StatusBar
-        translucent
-        backgroundColor='transparent'
-        barStyle='light-content' />
-      <Container style={styles.container}>
-        {!isReady ? (
-          <Loading />
-        ) : (
+    <Container style={styles.container}>
+      {!isReady ? (
+        <Loading />
+      ) : (
+        <NavigationContainer>
+          <StatusBar
+            translucent
+            backgroundColor='transparent'
+            barStyle='light-content' />
           <View style={styles.innerContainer}>
-            <UNHBanner />
-            {/* <Home /> */}
-            <TestInput />
+            <Stack.Navigator initialRouteName='Home'>
+              <Stack.Screen name='Home'
+                component={Home}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: 'transparent'} }} />
+              <Stack.Screen name='NavigationControl'
+                component={NavigationControl}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: 'transparent'} }} />
+              <Stack.Screen name='Training'
+                component={Training}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: 'transparent'} }} />
+              {/* <Stack.Screen name='TestInput'
+                component={TestInput}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: 'transparent'} }} /> */}
+            </Stack.Navigator>
           </View>
-        )}
-      </Container>
-    </>
+        </NavigationContainer>
+      )}
+    </Container>
   )
 }
 
@@ -53,8 +77,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    width: '90%',
-    paddingTop: 80
+    width: '100%'
   },
 })
 
