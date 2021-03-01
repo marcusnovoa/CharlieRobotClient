@@ -104,13 +104,13 @@ const VoiceInput: React.FC = () => {
       const data = await response.json()
       console.log(`User Intent: ${data.transcript}`)
       setIntent(data.transcript)
+      askWatson(data.transcript)
     } catch (error) {
       console.log('There was an error reading file', error)
       stopRecording()
       resetRecording() // Audio file deleted here
     }
     setIsFetching(false)
-    askWatson(intent)
   }
 
   const startRecording = async () => {
@@ -162,10 +162,6 @@ const VoiceInput: React.FC = () => {
   const handleOnPressOut = () => {
     stopRecording()
     getTranscription()
-  }
-
-  const handleIntentChange = (intent: any) => {
-    setIntent(intent)
   }
 
   const askWatson = (intent: string) => {
