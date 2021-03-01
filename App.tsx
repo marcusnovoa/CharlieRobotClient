@@ -9,6 +9,7 @@ import NavigationControl from './components/NavigationControl'
 import Training from './components/Training'
 import Login from './components/Login'
 // import TestInput from './components/TestInput'
+import VoiceInput from './components/VoiceInput'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -42,32 +43,37 @@ const App: React.FC = () => {
             translucent
             backgroundColor={backgroundColor}
             barStyle='light-content' />
-          <Stack.Navigator initialRouteName='Login'>
+          <Stack.Navigator initialRouteName='VoiceInput'>
             <Stack.Screen name='Home'
               component={Home}
               options={{
                 headerShown: false,
-                cardStyle: {backgroundColor: backgroundColor} }} />
+                cardStyle: {backgroundColor} }} />
             <Stack.Screen name='NavigationControl'
               component={NavigationControl}
               options={{
                 headerShown: false,
-                cardStyle: {backgroundColor: backgroundColor} }} />
+                cardStyle: {backgroundColor} }} />
             <Stack.Screen name='Training'
               component={Training}
               options={{
                 headerShown: false,
-                cardStyle: {backgroundColor: backgroundColor} }} />
+                cardStyle: {backgroundColor} }} />
             <Stack.Screen name='Login'
               component={Login}
               options={{
                 headerShown: false,
-                cardStyle: {backgroundColor: backgroundColor} }} />
+                cardStyle: {backgroundColor} }} />
+            <Stack.Screen name='VoiceInput'
+              component={VoiceInput}
+              options={{
+                headerShown: false,
+                cardStyle: {backgroundColor} }} />
             {/* <Stack.Screen name='TestInput'
               component={TestInput}
               options={{
                 headerShown: false,
-                cardStyle: {backgroundColor: 'transparent'} }} /> */}
+                cardStyle: {backgroundColor} }} /> */}
           </Stack.Navigator>
         </NavigationContainer>
       )}
