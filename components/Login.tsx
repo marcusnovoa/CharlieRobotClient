@@ -4,7 +4,7 @@ import { Input, Item, Button, Toast } from 'native-base';
 import ScreenContainer from "./containers/ScreenContainer";
 import UNHBanner from "./UNHBanner";
 import Spacing from "./styles/Spacing";
-// TODO create a declaration file or type for firebase
+// TODO create a declaration file or type for firebase or change config file to Typescript
 import { firebase } from "../src/firebase/config"
 
 function Login({navigation}: any) {
