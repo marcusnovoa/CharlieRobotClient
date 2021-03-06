@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StatusBar, StyleSheet } from 'react-native'
 import * as Font from 'expo-font'
 import { Ionicons } from '@expo/vector-icons'
-import { Container } from 'native-base'
+import { Container, Root } from 'native-base'
 import Home from './components/Home'
 import Loading from './components/Loading'
 import NavigationControl from './components/NavigationControl'
@@ -33,45 +33,48 @@ const App: React.FC = () => {
   }) // No variable array, run once
   
   return (
-    <Container style={styles.container}>
-      {!isReady ? (
-        <Loading />
-      ) : (
-        <NavigationContainer>
-          <StatusBar
-            translucent
-            backgroundColor={backgroundColor}
-            barStyle='light-content' />
-          <Stack.Navigator initialRouteName='Login'>
-            <Stack.Screen name='Home'
-              component={Home}
-              options={{
-                headerShown: false,
-                cardStyle: {backgroundColor: backgroundColor} }} />
-            <Stack.Screen name='NavigationControl'
-              component={NavigationControl}
-              options={{
-                headerShown: false,
-                cardStyle: {backgroundColor: backgroundColor} }} />
-            <Stack.Screen name='Training'
-              component={Training}
-              options={{
-                headerShown: false,
-                cardStyle: {backgroundColor: backgroundColor} }} />
-            <Stack.Screen name='Login'
-              component={Login}
-              options={{
-                headerShown: false,
-                cardStyle: {backgroundColor: backgroundColor} }} />
-            {/* <Stack.Screen name='TestInput'
-              component={TestInput}
-              options={{
-                headerShown: false,
-                cardStyle: {backgroundColor: 'transparent'} }} /> */}
-          </Stack.Navigator>
-        </NavigationContainer>
-      )}
-    </Container>
+    // Added Root for Toast within Login.tsx
+    <Root>
+      <Container style={styles.container}>
+        {!isReady ? (
+          <Loading />
+        ) : (
+          <NavigationContainer>
+            <StatusBar
+              translucent
+              backgroundColor={backgroundColor}
+              barStyle='light-content' />
+            <Stack.Navigator initialRouteName='Login'>
+              <Stack.Screen name='Home'
+                component={Home}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: backgroundColor} }} />
+              <Stack.Screen name='NavigationControl'
+                component={NavigationControl}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: backgroundColor} }} />
+              <Stack.Screen name='Training'
+                component={Training}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: backgroundColor} }} />
+              <Stack.Screen name='Login'
+                component={Login}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: backgroundColor} }} />
+              {/* <Stack.Screen name='TestInput'
+                component={TestInput}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: 'transparent'} }} /> */}
+            </Stack.Navigator>
+          </NavigationContainer>
+        )}
+      </Container>
+    </Root>
   )
 }
 
