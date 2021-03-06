@@ -7,6 +7,8 @@ import Spacing from "./styles/Spacing";
 // TODO create a declaration file or type for firebase or change config file to Typescript
 import { firebase } from "../src/firebase/config"
 
+const placeholderColor = "#a8a8a8"
+
 function Login({navigation}: any) {
 
   const [email, setEmail] = React.useState('')
@@ -18,15 +20,15 @@ function Login({navigation}: any) {
       <UNHBanner />
       <View style={{flexDirection: "column"}}>
         <Item regular>
-          <Input style={styles.input} placeholder={"Username"} keyboardType={"email-address"} onChangeText={(e) => {
-            setEmail(e)
-          }}/>
+          <Input style={styles.input} placeholder={"Username"} placeholderTextColor={placeholderColor} keyboardType={"email-address"}
+                 onChangeText={(e) => { setEmail(e) }}
+          />
         </Item>
         <Spacing bottom={20} />
         <Item regular>
-          <Input style={styles.input} secureTextEntry={true} placeholder={"Password"} onChangeText={(e) => {
-            setPassword(e)
-          }}/>
+          <Input style={styles.input} secureTextEntry={true} placeholderTextColor={placeholderColor} placeholder={"Password"}
+                 onChangeText={(e) => { setPassword(e) }}
+          />
         </Item>
         <Spacing bottom={20} />
         {/* TODO make a login call to the server */}
