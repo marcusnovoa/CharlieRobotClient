@@ -9,12 +9,13 @@ import { firebase } from "../src/firebase/config"
 
 const placeholderColor = "#a8a8a8"
 
-function Login({navigation}: any) {
+function Register({navigation}: any) {
 
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
+  const [confirmPassword, setConfirmPassword] = React.useState('')
 
-  return(
+  return (
     <ScreenContainer>
       <Spacing bottom={50} />
       <UNHBanner />
@@ -31,25 +32,44 @@ function Login({navigation}: any) {
           />
         </Item>
         <Spacing bottom={20} />
-        {/* TODO make a login call to the server */}
+        <Item regular>
+          <Input style={styles.input} secureTextEntry={true} placeholderTextColor={placeholderColor} placeholder={"Confirm Password"}
+                 onChangeText={(e) => { setConfirmPassword(e) }}
+          />
+        </Item>
+        <Spacing bottom={10} />
         <Button light full style={{backgroundColor: '#fff'}} onPress={() => {
-          firebase.auth().signInWithEmailAndPassword(email, password)
-            .then((response: any) => {
-              //console.log(response)
-              // TODO user info is sent back from google, maybe use that later
-              navigation.navigate('Home')
-            })
-            .catch((error: any) => {
-              console.log(error)
-              // TODO styling for error can be done better
+          if(password === confirmPassword && password.length >= 6) {
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+              .then((response: any) => {
+                navigation.navigate('Home')
+              })
+              .catch((error: any) => {
+                console.log(error)
+                // TODO styling for error can be done better
+                Toast.show({
+                  text: "ERROR try again",
+                  duration: 4000,
+                  style: {backgroundColor: "red"}
+                })
+              })
+          } else {
+            if(password.length < 6) {
               Toast.show({
-                text: "Email or password is wrong",
+                text: "Password needs to be length of 6",
                 duration: 4000,
                 style: {backgroundColor: "red"}
               })
-            })
+            } else {
+              Toast.show({
+                text: "Passwords don't match",
+                duration: 4000,
+                style: {backgroundColor: "red"}
+              })
+            }
+          }
         }}>
-          <Text>Login</Text>
+          <Text>Register</Text>
         </Button>
       </View>
       <Spacing bottom={10} />
@@ -59,10 +79,10 @@ function Login({navigation}: any) {
           color: placeholderColor
         }}
         onPress={() => {
-          navigation.navigate('Register')
+          navigation.navigate('Login')
         }}
       >
-        Don't have an account? Register here.
+        Already have an account? Login here.
       </Text>
     </ScreenContainer>
   )
@@ -74,4 +94,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Login;
+export default Register

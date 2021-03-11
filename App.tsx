@@ -8,6 +8,7 @@ import Loading from './components/Loading'
 import NavigationControl from './components/NavigationControl'
 import Training from './components/Training'
 import Login from './components/Login'
+import Register from './components/Register'
 // import TestInput from './components/TestInput'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -62,6 +63,11 @@ const App: React.FC = () => {
                   cardStyle: {backgroundColor: backgroundColor} }} />
               <Stack.Screen name='Login'
                 component={Login}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor: backgroundColor} }} />
+              <Stack.Screen name='Register'
+                component={Register}
                 options={{
                   headerShown: false,
                   cardStyle: {backgroundColor: backgroundColor} }} />
