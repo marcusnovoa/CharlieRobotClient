@@ -137,7 +137,6 @@ const VoiceInput: React.FC = () => {
     setIsFetching(true)
     try {
       const info = await FileSystem.getInfoAsync(recording.getURI())
-      // console.log(`FILE INFO: ${JSON.stringify(info)}`)
       const uri = info.uri
       const formData = new FormData()
       formData.append('file', {
@@ -216,12 +215,13 @@ const VoiceInput: React.FC = () => {
     api.post('/talk', {
       text: intent
     })
-    .then((res) => {
+    .then(res => {
       console.log(`Watson Response: ${res.data}`)
       setWatsonRes(res.data)
       getTextToSpeech(res.data)
-    }, (err) => {
-      console.log(err)
+    })
+    .catch(error => {
+      console.log(error)
     })
   }
 
