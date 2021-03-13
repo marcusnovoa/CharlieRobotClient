@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, ActivityIndicator } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
-import { Audio } from 'expo-av'
-import { CLOUD_FUNCTION_URL, serverURL } from '../env.json'
+import {
+  SPEECH_TO_TEXT_URL,
+  serverURL,
+  TEXT_TO_SPEECH_URL } from '../env.json'
 import { Body, Button, Card, CardItem, Text } from 'native-base'
-import Axios from 'axios'
-import * as Permissions from 'expo-permissions'
+import { Audio } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
+import * as Permissions from 'expo-permissions'
+import Axios from 'axios'
+import base64 from 'react-native-base64'
 import ScreenContainer from './containers/ScreenContainer'
 import Spacing from './styles/Spacing'
 
@@ -74,6 +78,17 @@ const VoiceInput: React.FC = () => {
 
   useEffect(() => {
     Permissions.askAsync(Permissions.AUDIO_RECORDING)
+    const enableAudio = async () => {
+      await Audio.setIsEnabledAsync(true)
+      await Audio.setAudioModeAsync({
+        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+        interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+        playThroughEarpieceAndroid: true,
+      })
+    }
+    enableAudio()
   }, [])
 
   const deleteRecordingFile = async () => {
@@ -83,6 +98,39 @@ const VoiceInput: React.FC = () => {
     } catch (error) {
       console.log('There was an error deleting recording file', error)
     }
+  }
+
+  const getTextToSpeech = async (text: string) => {
+    try {
+      const response = await fetch(TEXT_TO_SPEECH_URL, {
+        method: 'POST',
+        body: text
+      })
+      const data = await response.json()
+      const audioStream = data[0].audioContent.data // Data Bytes
+      const encoded = base64.encodeFromByteArray(audioStream)
+
+      try {
+        // Create sound file in device directory
+        const soundUri = FileSystem.documentDirectory + 'watsonRes.mp3'
+        FileSystem.writeAsStringAsync(soundUri, encoded, {
+          encoding: FileSystem.EncodingType.Base64
+        })
+        // Play Watson Response
+        const playResponse = async () => {
+          try {
+            await Audio.Sound.createAsync({
+              uri: soundUri
+            }, { shouldPlay: true })
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        playResponse()
+      } catch(error) {
+        console.log(error)
+      }
+    } catch(error) {console.log(`getTextToSpeech Error: ${error}`)}
   }
 
   const getTranscription = async () => {
@@ -97,8 +145,8 @@ const VoiceInput: React.FC = () => {
         type: 'audio/x-wav',
         name: 'speech2text'
       })
-      const response = await fetch(CLOUD_FUNCTION_URL, {
-        method: 'POST',
+      const response = await fetch(SPEECH_TO_TEXT_URL, {
+        method: 'POST', // @ts-ignore: Type 'FormData' is not assignable to body
         body: formData
       })
       const data = await response.json()
@@ -171,6 +219,7 @@ const VoiceInput: React.FC = () => {
     .then((res) => {
       console.log(`Watson Response: ${res.data}`)
       setWatsonRes(res.data)
+      getTextToSpeech(res.data)
     }, (err) => {
       console.log(err)
     })
