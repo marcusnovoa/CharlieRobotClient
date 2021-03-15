@@ -9,6 +9,12 @@
     "splash": {
       "image": "./assets/img/unh_logo_white.png",
       "backgroundColor": "#004785"
+    },
+    "ios": {
+      "bundleIdentifier": "CharlieRobot.Client"
+    },
+    "android": {
+      "package": "CharlieRobot.Client"
     }
   }
 }
