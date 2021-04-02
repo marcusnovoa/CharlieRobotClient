@@ -74,7 +74,7 @@ const VoiceInput: React.FC = () => {
   const [isFetching, setIsFetching] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [intent, setIntent] = useState('')
-  const [watsonRes, setWatsonRes] = useState('')
+  const [charlieRes, setCharlieRes] = useState('')
 
   useEffect(() => {
     Permissions.askAsync(Permissions.AUDIO_RECORDING)
@@ -90,6 +90,20 @@ const VoiceInput: React.FC = () => {
     }
     enableAudio()
   }, [])
+
+  const askCharlie = (intent: string) => {
+    api.post('/talk', {
+      text: intent
+    })
+    .then(res => {
+      console.log(`Charlie Response: ${res.data}`)
+      setCharlieRes(res.data)
+      getTextToSpeech(res.data)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }
 
   const deleteRecordingFile = async () => {
     try {
@@ -112,21 +126,11 @@ const VoiceInput: React.FC = () => {
 
       try {
         // Create sound file in device directory
-        const soundUri = FileSystem.documentDirectory + 'watsonRes.mp3'
+        const soundUri = FileSystem.documentDirectory + 'charlieRes.mp3'
         FileSystem.writeAsStringAsync(soundUri, encoded, {
           encoding: FileSystem.EncodingType.Base64
         })
-        // Play Watson Response
-        const playResponse = async () => {
-          try {
-            await Audio.Sound.createAsync({
-              uri: soundUri
-            }, { shouldPlay: true })
-          } catch (error) {
-            console.log(error)
-          }
-        }
-        playResponse()
+        playResponse(soundUri) // Play Charlie Response
       } catch(error) {
         console.log(error)
       }
@@ -151,13 +155,36 @@ const VoiceInput: React.FC = () => {
       const data = await response.json()
       console.log(`User Intent: ${data.transcript}`)
       setIntent(data.transcript)
-      askWatson(data.transcript)
+      askCharlie(data.transcript)
     } catch (error) {
       console.log('There was an error reading file', error)
       stopRecording()
       resetRecording() // Audio file deleted here
     }
     setIsFetching(false)
+  }
+
+  const handleOnPressIn = () => {
+    startRecording()
+  }
+
+  const handleOnPressOut = () => {
+    stopRecording()
+    getTranscription()
+  }
+
+  const playResponse = async (uri: string) => {
+    try {
+      await Audio.Sound.createAsync({ uri },
+        { shouldPlay: true })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const resetRecording = () => {
+    deleteRecordingFile()
+    setRecording(null)
   }
 
   const startRecording = async () => {
@@ -175,7 +202,7 @@ const VoiceInput: React.FC = () => {
     })
     
     setIntent('')    // Reset last intent
-    setWatsonRes('') // Reset Watson's last response
+    setCharlieRes('') // Reset Charlie's last response
     const newRecording = new Audio.Recording()
 
     try {
@@ -197,34 +224,6 @@ const VoiceInput: React.FC = () => {
     }
   }
 
-  const resetRecording = () => {
-    deleteRecordingFile()
-    setRecording(null)
-  }
-
-  const handleOnPressIn = () => {
-    startRecording()
-  }
-
-  const handleOnPressOut = () => {
-    stopRecording()
-    getTranscription()
-  }
-
-  const askWatson = (intent: string) => {
-    api.post('/talk', {
-      text: intent
-    })
-    .then(res => {
-      console.log(`Watson Response: ${res.data}`)
-      setWatsonRes(res.data)
-      getTextToSpeech(res.data)
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  }
-
   return (
     <ScreenContainer>
       <Spacing top={40} />
@@ -236,16 +235,16 @@ const VoiceInput: React.FC = () => {
               size={48}
               color={backgroundColor}
               style={{ marginBottom: 10 }} />
-            <Text style={styles.text}>Ask Watson</Text>
+            <Text style={styles.text}>Ask Charlie</Text>
             <Spacing bottom={20} />
             <Button full style={{ backgroundColor }}
-              onPressIn={handleOnPressIn}
-              onPressOut={handleOnPressOut}
+              onPress={isRecording ? handleOnPressOut : handleOnPressIn}
             >
-              {isFetching && <ActivityIndicator color='#ffffff' />}
-              {!isFetching && <Text style={styles.text}>
-                Hold to Ask Watson
-              </Text>}
+              {isFetching ? (
+                <ActivityIndicator color='#ffffff' />) :
+                (<Text style={styles.text}>
+                  {!isRecording ? 'Press to Speak' : 'Press to Stop'}
+                </Text>)}
             </Button>
           </Body>
         </CardItem>
@@ -253,8 +252,8 @@ const VoiceInput: React.FC = () => {
       <Spacing bottom={20} />
       {intent !== '' && <Text style={styles.res}>{`You Asked:\n${intent}`}</Text>}
       <Spacing bottom={20} />
-      {watsonRes !== '' && (
-        <Text style={styles.res}>{`Watson Replied:\n${watsonRes}`}</Text>)}
+      {charlieRes !== '' && (
+        <Text style={styles.res}>{`Charlie Replied:\n${charlieRes}`}</Text>)}
     </ScreenContainer>
   )
 }
