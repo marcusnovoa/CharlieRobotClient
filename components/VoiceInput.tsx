@@ -238,7 +238,8 @@ const VoiceInput: React.FC = () => {
             <Text style={styles.text}>Ask Charlie</Text>
             <Spacing bottom={20} />
             <Button full style={{ backgroundColor }}
-              onPress={isRecording ? handleOnPressOut : handleOnPressIn}
+              onPress={!isRecording ? handleOnPressIn : handleOnPressOut}
+              disabled={isFetching}
             >
               {isFetching ? (
                 <ActivityIndicator color='#ffffff' />) :
