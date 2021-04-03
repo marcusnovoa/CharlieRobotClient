@@ -1,11 +1,10 @@
 import React from "react";
 import { StyleSheet, Text, View } from 'react-native'
-import { Input, Item, Button } from 'native-base'
+import { Input, Item, Button, Spinner } from 'native-base'
 import { serverURL } from '../env.json'
 import Axios from 'axios'
 import ScreenContainer from './containers/ScreenContainer'
 import Spacing from './styles/Spacing'
-import UNHBanner from '../components/UNHBanner'
 
 // TODO deploy server to AWS and set up CI/CD
 const api = Axios.create({
@@ -16,11 +15,10 @@ function TestInput() {
 
   const [message, setMessage] = React.useState('')
   const [watsonRes, setWatsonRes] = React.useState('')
+  const [isLoading, setIsLoading] = React.useState(false)
 
   return (
     <ScreenContainer>
-      <Spacing top={80} />
-      <UNHBanner />
       <View style={styles.enter}>
         <Item regular>
           <Input
@@ -32,12 +30,15 @@ function TestInput() {
         </Item>
         <Spacing bottom={20} />
         <Button light full onPress={() => {
+          setIsLoading(true)
           api.post('/talk', {
             text: message
           })
             .then((res) => {
+              setIsLoading(false)
               setWatsonRes(res.data)
             }, (err) => {
+              setIsLoading(false)
               console.log(err)
             })
         }}>
@@ -45,7 +46,8 @@ function TestInput() {
         </Button>
       </View>
       <Spacing bottom={20} />
-      {watsonRes !== '' && <Text style={styles.res}>{watsonRes}</Text>}
+      {isLoading && <Spinner />}
+      {!isLoading && watsonRes !== '' && <Text style={styles.res}>{watsonRes}</Text>}
     </ScreenContainer>
 )}
 
