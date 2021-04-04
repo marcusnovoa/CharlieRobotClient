@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, View, AsyncStorage } from "react-native"
 import { Input, Item, Button, Toast } from 'native-base';
 import ScreenContainer from "./containers/ScreenContainer";
 import UNHBanner from "./UNHBanner";
@@ -13,6 +13,16 @@ function Login({navigation}: any) {
 
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
+
+  const storeSession = async (uuid: string) => {
+    try {
+      await AsyncStorage.setItem(
+        "id", uuid
+      )
+    } catch (e) {
+      console.log(e.toString())
+    }
+  }
 
   return(
     <ScreenContainer>
@@ -35,8 +45,8 @@ function Login({navigation}: any) {
         <Button light full style={{backgroundColor: '#fff'}} onPress={() => {
           firebase.auth().signInWithEmailAndPassword(email, password)
             .then((response: any) => {
-              //console.log(response)
-              // TODO user info is sent back from google, maybe use that later
+              // TODO Need to create log out component to clear local session
+              storeSession(response.user.uid)
               navigation.navigate('Home')
             })
             .catch((error: any) => {

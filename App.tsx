@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StatusBar, StyleSheet } from 'react-native'
+import {AsyncStorage, StatusBar, StyleSheet} from 'react-native'
 import * as Font from 'expo-font'
 import { Ionicons } from '@expo/vector-icons'
 import { Container, Root } from 'native-base'
@@ -19,6 +19,18 @@ const backgroundColor = '#004785'
 const App: React.FC = () => {
 
   const [isReady, setIsReady] = useState(false)
+  const [initialScreen, setInitalScreen] = useState("Login")
+
+  const retrieveData = async (itemName: string) => {
+    try {
+      const value = await AsyncStorage.getItem(itemName)
+      if (value !== null) {
+        setInitalScreen("Home")
+      }
+    } catch (e) {
+      console.log(e.toString())
+    }
+  }
 
   useEffect(() => {
     const loadFont = async () => {
@@ -31,6 +43,7 @@ const App: React.FC = () => {
     }
     // Load missing font family
     loadFont()
+    retrieveData("id")
   }) // No variable array, run once
   
   return (
@@ -45,7 +58,7 @@ const App: React.FC = () => {
               translucent
               backgroundColor={backgroundColor}
               barStyle='light-content' />
-            <Stack.Navigator initialRouteName='Login'>
+            <Stack.Navigator initialRouteName={initialScreen}>
               <Stack.Screen name='Home'
                 component={Home}
                 options={{
