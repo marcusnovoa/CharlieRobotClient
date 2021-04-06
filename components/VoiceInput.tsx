@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, ActivityIndicator } from 'react-native'
+import { ActivityIndicator, Dimensions, Image, StyleSheet, View } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
 import {
   SPEECH_TO_TEXT_URL,
   serverURL,
   TEXT_TO_SPEECH_URL } from '../env.json'
-import { Body, Button, Card, CardItem, Text } from 'native-base'
+import { Button, Text } from 'native-base'
 import { Audio } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import * as Permissions from 'expo-permissions'
 import Axios from 'axios'
 import base64 from 'react-native-base64'
-import ScreenContainer from './containers/ScreenContainer'
 import Spacing from './styles/Spacing'
 
 const backgroundColor = '#004785'
+const soundUri = FileSystem.documentDirectory + 'charlieRes.mp3'
 
 /* ========= REDEFINE FORM DATA FOR REACT-NATIVE ========= */
 interface FormDataValue {
@@ -47,26 +47,26 @@ const api = Axios.create({
 })
 
 const recordingOptions = {
-    /* ANDROID NOT CURRENTLY IN USE. Not getting results from speech to
-     * text with .m4a files but the parameters are required. */
-    android: {
-      extension: '.m4a',
-      outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-      audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-      sampleRate: 44100,
-      numberOfChannels: 2,
-      bitRate: 128000,
-    },
-    ios: {
-      extension: '.wav',
-      audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
-      sampleRate: 44100,
-      numberOfChannels: 1,
-      bitRate: 128000,
-      linearPCMBitDepth: 16,
-      linearPCMIsBigEndian: false,
-      linearPCMIsFloat: false,
-    },
+  /* ANDROID NOT CURRENTLY IN USE. Not getting results from speech to
+    * text with .m4a files but the parameters are required. */
+  android: {
+    extension: '.m4a',
+    outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+    audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+    sampleRate: 44100,
+    numberOfChannels: 2,
+    bitRate: 128000,
+  },
+  ios: {
+    extension: '.wav',
+    audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+    sampleRate: 44100,
+    numberOfChannels: 1,
+    bitRate: 128000,
+    linearPCMBitDepth: 16,
+    linearPCMIsBigEndian: false,
+    linearPCMIsFloat: false,
+  },
 }
 
 const VoiceInput: React.FC = () => {
@@ -97,7 +97,7 @@ const VoiceInput: React.FC = () => {
     })
     .then(res => {
       console.log(`Charlie Response: ${res.data}`)
-      setCharlieRes(res.data)
+      setCharlieRes(modifyRes(res.data))
       getTextToSpeech(res.data)
     })
     .catch(error => {
@@ -114,6 +114,17 @@ const VoiceInput: React.FC = () => {
     }
   }
 
+  const deleteResponseFile = async () => {
+    try {
+      const resFile = await FileSystem.getInfoAsync(soundUri)
+      if (resFile.exists) await FileSystem.deleteAsync(resFile.uri, {
+        idempotent: true
+      })
+    } catch (error) {
+      console.log('There was an error deleting response audio file', error)
+    }
+  }
+
   const getTextToSpeech = async (text: string) => {
     try {
       const response = await fetch(TEXT_TO_SPEECH_URL, {
@@ -126,7 +137,6 @@ const VoiceInput: React.FC = () => {
 
       try {
         // Create sound file in device directory
-        const soundUri = FileSystem.documentDirectory + 'charlieRes.mp3'
         FileSystem.writeAsStringAsync(soundUri, encoded, {
           encoding: FileSystem.EncodingType.Base64
         })
@@ -154,7 +164,7 @@ const VoiceInput: React.FC = () => {
       })
       const data = await response.json()
       console.log(`User Intent: ${data.transcript}`)
-      setIntent(data.transcript)
+      setIntent(modifyIntent(data.transcript))
       askCharlie(data.transcript)
     } catch (error) {
       console.log('There was an error reading file', error)
@@ -162,15 +172,44 @@ const VoiceInput: React.FC = () => {
       resetRecording() // Audio file deleted here
     }
     setIsFetching(false)
+    // deleteResponseFile()
   }
 
   const handleOnPressIn = () => {
     startRecording()
   }
 
-  const handleOnPressOut = () => {
+  const handleOnPressOut = async () => {
     stopRecording()
     getTranscription()
+  }
+
+  const modifyIntent = (intent: string) => {
+    const interrogativeWords = {
+      can: 'can',
+      how: 'how',
+      should: 'should',
+      who: 'who',
+      'who\'s': 'who\'s',
+      what: 'what',
+      'what\'s': 'what\'s',
+      where: 'where',
+      'where\'s': 'where\'s',
+      when: 'when',
+      'when\'s': 'when\'s',
+      why: 'why'
+    } // @ts-ignore: Element implicitly has an 'any' type
+    if (interrogativeWords[intent.split(' ')[0]])
+      intent += '?' // Add question mark if necessary
+    else
+      intent += '.' // Add period
+    return intent.charAt(0).toUpperCase() + intent.slice(1) // Capitalize
+  }
+
+  const modifyRes = (res: string) => {
+    if (res[res.length-1] !== '.' && res[res.length-1] !== '?')
+      res += '.' // Add period
+    return res
   }
 
   const playResponse = async (uri: string) => {
@@ -225,44 +264,77 @@ const VoiceInput: React.FC = () => {
   }
 
   return (
-    <ScreenContainer>
+    <View style={styles.container}>
+      <Image
+        style={styles.logo}
+        source={require('../assets/img/charlie_logo.png')} />
       <Spacing top={40} />
-      <Card style={styles.card}>
-        <CardItem>
-          <Body style={{ alignItems: 'center' }}>
-            <FontAwesome
-              name='microphone'
-              size={48}
-              color={backgroundColor}
-              style={{ marginBottom: 10 }} />
-            <Text style={styles.text}>Ask Charlie</Text>
-            <Spacing bottom={20} />
-            <Button full style={{ backgroundColor }}
-              onPress={!isRecording ? handleOnPressIn : handleOnPressOut}
-              disabled={isFetching}
-            >
-              {isFetching ? (
-                <ActivityIndicator color='#ffffff' />) :
-                (<Text style={styles.text}>
-                  {!isRecording ? 'Press to Speak' : 'Press to Stop'}
-                </Text>)}
-            </Button>
-          </Body>
-        </CardItem>
-      </Card>
-      <Spacing bottom={20} />
-      {intent !== '' && <Text style={styles.res}>{`You Asked:\n${intent}`}</Text>}
-      <Spacing bottom={20} />
-      {charlieRes !== '' && (
-        <Text style={styles.res}>{`Charlie Replied:\n${charlieRes}`}</Text>)}
-    </ScreenContainer>
+      <View style={styles.wrapper}>
+        {intent === '' ? (
+          <View>
+            <View style={styles.titleTextWrapper}>
+              <Text style={{ color: '#fff', fontSize: 30 }}>Charlie Assistant</Text>
+            </View>
+          </View>) : (
+          <View style={styles.resTextWrapper}>
+            {intent !== '' && <Text style={styles.res}>{`You Asked:\n${intent}`}</Text>}
+            <Spacing top={20} />
+            {charlieRes !== '' && (
+              <Text style={styles.res}>{`Charlie Replied:\n${charlieRes}`}</Text>)}
+          </View>
+        )}
+        <View style={styles.buttonWrapper}>
+          <Button full style={styles.button}
+            onPress={!isRecording ? handleOnPressIn : handleOnPressOut}
+            disabled={isFetching}
+          >
+            {isFetching ? (
+              <ActivityIndicator
+                color={backgroundColor}
+                size={'large'} />) :
+              (<Text style={styles.text}>
+                {!isRecording ? (
+                  <FontAwesome
+                    name='microphone'
+                    size={35}
+                    color={backgroundColor} />
+                ) : (
+                  <FontAwesome
+                    name='stop'
+                    size={30}
+                    color={backgroundColor} />
+                )}
+              </Text>)}
+          </Button>
+        </View>
+      </View>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  card: {
-    paddingTop: 20,
-    paddingBottom: 8
+  button: {
+    backgroundColor: '#fff',
+    borderRadius: 100,
+    width: 75,
+    height: 75
+  },
+  buttonWrapper: {
+    width: '100%',
+    paddingLeft: (Dimensions.get('window').width / 2) - (75 / 2),
+    position: 'absolute',
+    bottom: 15
+  },
+  container: {
+    height: '100%',
+    backgroundColor: '#111'
+  },
+  logo: {
+    height: '100%',
+    width: '100%',
+    opacity: 0.2,
+    position: 'absolute',
+    resizeMode: 'contain'
   },
   res: {
     color: '#fff',
@@ -270,6 +342,21 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16
+  },
+  titleTextWrapper: {
+    width: '90%',
+    marginLeft: '5%',
+    alignItems: 'center'
+  },
+  wrapper: {
+    flex: 1,
+    flexDirection: 'column',
+    height: '100%',
+    position: 'relative'
+  },
+  resTextWrapper: {
+    width: '90%',
+    marginLeft: '5%'
   }
 })
 
