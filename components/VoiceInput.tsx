@@ -48,7 +48,7 @@ const api = Axios.create({
 
 const recordingOptions = {
   /* ANDROID NOT CURRENTLY IN USE. Not getting results from speech to
-    * text with .m4a files but the parameters are required. */
+   * text with .m4a files but the parameters are required. */
   android: {
     extension: '.m4a',
     outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
@@ -207,8 +207,9 @@ const VoiceInput: React.FC = () => {
   }
 
   const modifyRes = (res: string) => {
-    if (res[res.length-1] !== '.' && res[res.length-1] !== '?')
-      res += '.' // Add period
+    if (res[res.length-1] !== '.' && res[res.length-1] !== '?' &&
+        res[res.length-1] !== ' ')
+          res += '.' // Add period
     return res
   }
 
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: (Dimensions.get('window').width / 2) - (75 / 2),
     position: 'absolute',
-    bottom: 15
+    bottom: 25
   },
   container: {
     height: '100%',
