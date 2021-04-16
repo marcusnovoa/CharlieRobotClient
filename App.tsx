@@ -10,6 +10,7 @@ import Training from './components/Training'
 import Login from './components/Login'
 import Register from './components/Register'
 // import TestInput from './components/TestInput'
+import VoiceInput from './components/VoiceInput'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -63,12 +64,12 @@ const App: React.FC = () => {
                 component={Home}
                 options={{
                   headerShown: false,
-                  cardStyle: {backgroundColor: backgroundColor} }} />
+                  cardStyle: {backgroundColor} }} />
               <Stack.Screen name='NavigationControl'
                 component={NavigationControl}
                 options={{
                   headerShown: false,
-                  cardStyle: {backgroundColor: backgroundColor} }} />
+                  cardStyle: {backgroundColor} }} />
               <Stack.Screen name='Training'
                 component={Training}
                 options={{
@@ -78,12 +79,17 @@ const App: React.FC = () => {
                 component={Login}
                 options={{
                   headerShown: false,
-                  cardStyle: {backgroundColor: backgroundColor} }} />
+                  cardStyle: {backgroundColor} }} />
               <Stack.Screen name='Register'
                 component={Register}
                 options={{
                   headerShown: false,
-                  cardStyle: {backgroundColor: backgroundColor} }} />
+                  cardStyle: {backgroundColor} }} />
+              <Stack.Screen name='VoiceInput'
+                component={VoiceInput}
+                options={{
+                  headerShown: false,
+                  cardStyle: {backgroundColor} }} />
               {/* <Stack.Screen name='TestInput'
                 component={TestInput}
                 options={{
