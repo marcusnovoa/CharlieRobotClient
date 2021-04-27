@@ -26,7 +26,7 @@ const App: React.FC = () => {
     try {
       const value = await AsyncStorage.getItem(itemName)
       if (value !== null) {
-        setInitalScreen("Home")
+        setInitalScreen("VoiceInput")
       }
     } catch (e) {
       console.log(e.toString())
