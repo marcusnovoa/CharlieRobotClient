@@ -79,6 +79,7 @@ const App: React.FC = () => {
                 component={Login}
                 options={{
                   headerShown: false,
+                  gestureEnabled: false,
                   cardStyle: {backgroundColor} }} />
               <Stack.Screen name='Register'
                 component={Register}
@@ -89,6 +90,7 @@ const App: React.FC = () => {
                 component={VoiceInput}
                 options={{
                   headerShown: false,
+                  gestureEnabled: false,
                   cardStyle: {backgroundColor} }} />
               {/* <Stack.Screen name='TestInput'
                 component={TestInput}
