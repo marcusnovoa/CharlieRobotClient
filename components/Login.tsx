@@ -47,7 +47,7 @@ function Login({navigation}: any) {
             .then((response: any) => {
               // TODO Need to create log out component to clear local session
               storeSession(response.user.uid)
-              navigation.navigate('Home')
+              navigation.navigate('VoiceInput')
             })
             .catch((error: any) => {
               console.log(error)

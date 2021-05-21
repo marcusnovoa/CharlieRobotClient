@@ -14,7 +14,7 @@ function DevLogoutButton({navigation}: any) {
   }
 
   return (
-    <Button light full onPress={logout}>
+    <Button light onPress={logout}>
       <Text>Dev Logout</Text>
     </Button>
   )

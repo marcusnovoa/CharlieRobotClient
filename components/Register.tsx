@@ -37,7 +37,7 @@ function Register({navigation}: any) {
                  onChangeText={(e) => { setConfirmPassword(e) }}
           />
         </Item>
-        <Spacing bottom={10} />
+        <Spacing bottom={20} />
         <Button light full style={{backgroundColor: '#fff'}} onPress={() => {
           if(password === confirmPassword && password.length >= 6) {
             firebase.auth().createUserWithEmailAndPassword(email, password)
