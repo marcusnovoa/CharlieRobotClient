@@ -269,12 +269,12 @@ const VoiceInput: React.FC = () => {
       <Image
         style={styles.logo}
         source={require('../assets/img/charlie_logo.png')} />
-      <Spacing top={40} />
+      <Spacing top={50} />
       <View style={styles.wrapper}>
         {intent === '' ? (
           <View>
             <View style={styles.titleTextWrapper}>
-              <Text style={{ color: '#fff', fontSize: 30 }}>Charlie Assistant</Text>
+              <Text style={{ color: '#fff', fontSize: 30 }}>Charlie Virtual Assistant</Text>
             </View>
           </View>) : (
           <View style={styles.resTextWrapper}>

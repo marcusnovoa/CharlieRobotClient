@@ -8,7 +8,7 @@ const UNHBanner: React.FC = () => (
       style={styles.logo}
       source={require('../assets/img/unh_logo_white.png')} />
     <View style={styles.horizontal} />
-    <Text style={styles.text}>Admissions Robot</Text>
+    <Text style={styles.text}>Charlie Virtual Assistant</Text>
   </View>
 )
 
